@@ -1,0 +1,40 @@
+# Blueprint Render pour l'API G-UGP.
+# Render → New → Blueprint → choisir ce dépôt : le service est créé avec ces
+# réglages. Les variables marquées `sync: false` sont demandées à la création
+# (valeurs secrètes, jamais stockées dans le dépôt).
+services:
+  - type: web
+    name: gugp-api
+    runtime: docker
+    rootDir: api
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: frankfurt
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      # URL du frontend Vercel (ex. https://gestion-ugp.vercel.app), sans « / » final.
+      - key: CORS_ORIGIN
+        sync: false
+      - key: APP_URL
+        sync: false
+      # Envoi d'e-mails (comptes, mots de passe, nouvelles demandes) via l'API
+      # HTTP Brevo : le plan gratuit de Render bloque les ports SMTP.
+      - key: BREVO_API_KEY
+        sync: false
+      - key: SMTP_FROM
+        sync: false
+      # Notifications push navigateur des gestionnaires.
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: VAPID_SUBJECT
+        sync: false
